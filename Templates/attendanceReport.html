@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Peports Generations</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/animate/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/assets/owl.carousel.min.css') }}">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body{
+            background-color: white;
+        }
+        .fetchStudents table {
+        margin-left: 2%;
+        margin-top: 2%;
+        width: 95%;
+        border-collapse: collapse;
+    }
+    h4{
+        color: blue;
+    }
+    h6{
+        margin-left: 2%;
+    }
+
+    .fetchStudents th, .fetchStudents td {
+        border: 1px solid rgb(54, 52, 52);
+        padding: 8px;
+        color: black;
+        text-align: center;
+    }
+
+    .fetchStudents th {
+        background-color: black;
+        color: white;
+    }
+
+
+    .no-data{
+        margin-top: 10%;
+        font-size: larger;
+        color: red;
+    }
+
+    .custom-button{
+        margin-top: 3%; 
+        margin-left: 37%; 
+        color: white; 
+        width: 30%;
+        background-color: black;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;  
+    }
+    .custom-button:hover {
+        background-color: darkgreen;
+    }
+</style>
+</head>
+<body>
+    <div class="container-xxl bg-white p-0">
+        <nav id="navbar" class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+            <a href="/showStream" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+                <h3 class="m-0" style="color: #007BFF;">Student Attendance System</h3>
+                <h3 style="color: black; font-size: small; "></h3>
+            </a>
+            <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto p-4 p-lg-0">
+                {% if session.email %}
+                    <a href="/showStream" class="nav-item nav-link">Home</a> 
+                    <a href="/monthlyReport"  class="nav-item nav-link">Reports</a>
+                    <a href="/login" class="nav-item nav-link">{{session.email}}</a>
+                    <a href="/logout" class="nav-item nav-link">Logout</a>
+                {% endif %}
+                </div>
+            </div>
+        </nav>
+    </div>
+    {% block content %}
+        {% if student_percentages|length > 0 %}
+        <h6 style="margin-top: 8%;">{{ batch }}</h6>
+        <h6>Division: {{ division }}</h6>
+        <h6>Month: {{ selected_month }}</h6>
+        <h6>Subject Name:  {{ subject_name }}</h6>
+        <h6>No. of Lectures : {{ total_lectures }}</h6>
+        <h6>Faculty Name : {{ faculty_name }}</h6>
+        <div class="fetchStudents">
+            <table border="1">
+                <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    {% for date in distinct_dates %}
+                        <th>{{ date }}</th>
+                    {% endfor %}
+                    <th>Attendance Percentage</th>
+                </tr>
+                {% for student_roll, student_info in student_percentages.items() %}
+                    <tr>
+                        <td>{{ student_roll }}</td>
+                        <td>{{ student_info['name'] }}</td>
+                        {% for date in distinct_dates %}
+                            <td>
+                                {% if date in student_attendance[student_roll]['attendance_by_date'] %}
+                                    {{ student_attendance[student_roll]['attendance_by_date'][date] }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        <td>{{ student_info['percentage'] }}%</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+           
+        <form action="/saveToExcel" method="POST">
+            <input type="hidden" name="batch" value="{{ batch }}">
+            <input type="hidden" name="division" value="{{ division }}">
+            <input type="hidden" name="semester" value="{{ semester }}">
+            <input type="hidden" name="month" value="{{ selected_month }}">
+            <input type="hidden" name="subject_name" value="{{ subject_name }}">
+            <button type="submit" class="custom-button">Save to Excel</button>
+        </form>
+
+        {% else %}
+            <div class="no-data">
+                <p>No data found for the selected criteria</p>
+                <p>There is no attendance data for the selected month and subject.</p>
+            </div>
+        {% endif %}
+{% endblock %}
+
+
+
+  
+
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl-carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl-carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='lib/wow.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+
+</html>
+
+

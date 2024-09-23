@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Attendance</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    
+
+     <!-- Icon Font Stylesheet -->
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+ 
+     <!-- Libraries Stylesheet -->
+     <link rel="stylesheet" href="{{ url_for('static', filename='lib/animate/animate.min.css') }}">
+     <link rel="stylesheet" href="{{ url_for('static', filename='lib/assets/owl.carousel.min.css') }}">
+ 
+     <!-- Customized Bootstrap Stylesheet -->
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+ 
+     <!-- Template Stylesheet -->
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Create a 3-column grid; Adjust as needed */
+            gap: 40px; /* Add some space between grid items */
+            padding: 70px; /* Add padding to the grid container */
+        }
+        .grid-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* Two columns within each row */
+        gap: 40px; /* Add space between grid items in a row */
+        padding: 70px;
+
+        }
+        .grid-item {
+            background-color: #f12457;
+            padding: 70px;
+            font-size: large;
+            text-align: center;
+            border: 1px solid #ccc;
+            transition: transform 0.7s;
+        }
+        .grid-item:hover {
+            transform: scale(1.02); /* Increase size on hover */
+        }
+        .student{
+            margin-left: 5px;
+            margin-top: 7%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 50px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="radio"] {
+            margin: 0 auto;
+            display: block;
+        }
+        .content {
+            display: inline;
+            flex-direction: column;
+            margin: 20px;
+            margin-top: 10%;
+        }
+
+        .content input[type="date"],
+        .content input[type="time"]
+             {
+            margin-bottom: 10px;
+            width: 12%;
+            margin-left: 10px;
+        }
+        .content input[type="text"]{
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 20%;
+            margin-left: 20px;
+        }   
+        label {
+            margin-left: 40px;
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Navbar Start -->
+        <nav id="navbar" class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+            <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+                <h1 class="m-0" style="color: orange;">Yashaswi Attendance System</h1>
+                <h3 style="color: black; font-size: small; "></h3>
+            </a>
+            <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto p-4 p-lg-0">
+                    <a href="/" class="nav-item nav-link">Home</a> 
+                </div>
+                {% if session.adminEmail %}
+                    <a href="/login" class="btn rounded-0 py-4 px-lg-5 d-none d-lg-block"><i class="fa ms-6">{{session.adminEmail}}</i></a>
+                    <a href="/logout" class="nav-item nav-link">Logout</a>
+                {% else %}
+                <a href="/showAttendance" class="nav-item nav-link">View Attendance</a>
+                <a href="/login" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block"><i class="fa ms-6">{{session.email}}</i></a>
+                <a href="/logout" class="nav-item nav-link">Logout</a>
+                {% endif %}
+            </div>
+        </nav>
+        <div class="student">
+            <div class="content">
+                <form>
+                <label for="date">Select Date</label>
+                <input type="date" id="date" required>
+        
+                <label for="start-time">Start time</label>
+                <input type="time" id="start-time" required>
+        
+                <label for="end-time">End time</label>
+                <input type="time" id="end-time" required>
+        
+                <label for="subject">Subject Name</label>
+                <input type="text" id="subject" required>
+            </div>
+            <table>
+                <tr>
+                    <th>Roll Number</th>
+                    <th>Student Name</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                </tr>
+                {% for student in students %}
+                <tr>
+                    <td>{{student.roll}}</td>
+                    <td>{{student.name}}</td>
+                    <td><input type="radio" name="attendance_{{ student.roll }}" value="Present"></td>
+                    <td><input type="radio" name="attendance_{{ student.roll }}" value="Absent"></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div>
+                <button style="margin-left: 45%; background-color: green; color: white">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const absentRadios = document.querySelectorAll(".absent-radio");
+        const presentRadios = document.querySelectorAll(".present-radio");
+
+        absentRadios.forEach((absentRadio, index) => {
+            absentRadio.addEventListener("change", () => {
+                if (absentRadio.checked) {
+                    presentRadios[index].disabled = true;
+                }
+            });
+        });
+    </script>
+
+    
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl-carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl-carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='lib/wow.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+</body>
+
+</html>

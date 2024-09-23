@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <title>STUDENT ATTEDANCE SYSTEM </title>
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-grad-school.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/animate/animate.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/assets/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+<body>
+  <header class="main-header clearfix" role="header">
+    <div class="logo">
+      <a href="/"><em>Student ATTEDANCE SYSTEM</em></a>
+    </div>
+
+    <nav id="menu" class="main-nav" role="navigation">
+      <ul class="main-menu">
+        <li><a href="/facultyLogin">Faculty Login</a></li>
+        <li><a href="/adminLogin">Admin Login</a></li>
+    </nav>
+
+  </header>
+
+  <section class="section main-banner" id="top" data-section="section1">
+      <video autoplay muted loop id="bg-video">
+          <source src="{{url_for('static', filename='img/course-video.mp4') }}" type="video/mp4" />
+      </video>
+
+      <div class="video-overlay header-text">
+          <div class="caption"><br><br><br>
+              <h2><em style="color: white;">International Institute of Management Science, Chinchwad</em></h2>
+              <div class="main-button">
+                  <img src="{{url_for('static', filename='img/AA.png')}}" alt="" />
+              </div>
+          </div>
+      </div>
+  </section>
+</body>
+</html>
